@@ -1,0 +1,103 @@
+﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        xmlns:local="clr-namespace:NetPackCreator"
+        
+        x:Class="NetPackCreator.NetPacketCreator"
+        Title="Network packet creator" MinWidth="800" MinHeight="600"
+        TextOptions.TextRenderingMode="ClearType"
+        TextOptions.TextFormattingMode="Display"
+        SnapsToDevicePixels="True" Icon="mainicon.ico" >
+    
+    <Window.Resources>
+        <sys:String x:Key="IPAddressRegex">^(?:
+            (?: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){0,7}                                                   (?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))? )       |
+            (?: (\:{2}(?:(?:[1-9a-fA-F][0-9a-fA-F]{0,3})\:){0,6}                                                   (?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))? ) | \:) |
+            (?: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){1,7}                                                                                              \:) |
+            
+            (?: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:)    \: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){0,5} (?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))? )       |
+            (?: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){2} \: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){0,4} (?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))? )       |
+            (?: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){3} \: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){0,3} (?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))? )       |
+            (?: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){4} \: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){0,2} (?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))? )       |
+            (?: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){5} \: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){0,1} (?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))? )       |
+            (?: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){6} \: 						                           (?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))? )       |
+            
+            (?: [fF][eE]80\: (?:(?:\:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))){1,4})                                                   %(?:[0-9a-zA-Z]{1,})? )       |
+            
+            (?: (?: (?:\:{2}) | (?:\:{2}[fF]{4}\:(0\:)?) | (?:(?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){1,4}\:) )?
+                (?: (?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){0,3}                    (?:25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])? )
+            )$</sys:String>
+        <!-- 1: normal (1:2:3:4:5:6:7:8) -->
+        <!-- 2: first zero (::2:3:4:5:6:7:8 or ::1) or zero only (::) -->
+        <!-- 3: last zero (1:2:3:4:5:6:7:: or 1::) -->
+
+        <!-- 4 - 9: middle zero (1::3:4:5:6:7:8 or 1:2:3:4:5:6::8) -->
+
+        <!-- 10: link-local with zone index (fe80::7:8%eth0) -->
+
+        <!-- 11, 12: IPv4 (127.0.0.1) or deprecated IPv4-compatible IPv6 (::127.0.0.1) or IPv4-mapped IPv6 (::ffff:127.0.0.1) or IPv4-translated IPv6 (::ffff:0:127.0.0.1) or IPv4-embedded IPv6 64:ff9b::192.0.2.33 -->
+    </Window.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+        </Grid.RowDefinitions>
+        
+        <GroupBox Grid.Row="0" Margin="3" Header="Interfaces">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Source adapter" VerticalAlignment="Center" Margin="0, 0, 3, 0" />
+                <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="5" Margin="3">
+                    <ComboBoxItem>222</ComboBoxItem>
+                    <ComboBoxItem>333</ComboBoxItem>
+                    <ComboBoxItem>222</ComboBoxItem>
+                    <ComboBoxItem>333</ComboBoxItem>
+                    <ComboBoxItem>222</ComboBoxItem>
+                    <ComboBoxItem>333</ComboBoxItem>
+                    <ComboBoxItem>333</ComboBoxItem>
+                    <ComboBoxItem>222</ComboBoxItem>
+                    <ComboBoxItem>333</ComboBoxItem>
+                    <ComboBoxItem>333</ComboBoxItem>
+                    <ComboBoxItem>333</ComboBoxItem>
+                    <ComboBoxItem>222</ComboBoxItem>
+                </ComboBox>
+
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Source MAC" VerticalAlignment="Center" Margin="0, 0, 3, 0" />
+                <TextBox Grid.Row="1" Grid.Column="1" Margin="3" ToolTip="Source MAC" local:Masking.Mask="^((?:[0-9a-fA-F]{2}){0,}|(?:[0-9a-fA-F]{2}\:){0,}|(?:[0-9a-fA-F]{2}\-){0,})?[0-9a-fA-F]{0,2}$" />
+
+                <TextBlock Grid.Row="1" Grid.Column="2" Text="Source IP" VerticalAlignment="Center" Margin="3, 0, 3, 0" />
+                <TextBox Grid.Row="1" Grid.Column="3" Margin="3" ToolTip="Source IP" local:Masking.Mask="{StaticResource IPAddressRegex}" />
+
+                <TextBlock Grid.Row="1" Grid.Column="4" Text="Source port" VerticalAlignment="Center" Margin="3, 0, 3, 0" />
+                <TextBox Grid.Row="1" Grid.Column="5" Margin="3" ToolTip="Source port" local:IntegerRange.Min="1" local:IntegerRange.Max="65535" />
+
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Destination MAC" VerticalAlignment="Center" Margin="0, 0, 3, 0" />
+                <TextBox Grid.Row="2" Grid.Column="1" Margin="3" ToolTip="Destination MAC" local:Masking.Mask="^((?:[0-9a-fA-F]{2}){0,}|(?:[0-9a-fA-F]{2}\:){0,}|(?:[0-9a-fA-F]{2}\-){0,})?[0-9a-fA-F]{0,2}$" />
+
+                <TextBlock Grid.Row="2" Grid.Column="2" Text="Destination IP" VerticalAlignment="Center" Margin="3, 0, 3, 0" />
+                <TextBox Grid.Row="2" Grid.Column="3" Margin="3" ToolTip="Destination IP" local:Masking.Mask="{StaticResource IPAddressRegex}" />
+                
+                <TextBlock Grid.Row="2" Grid.Column="4" Text="Destination port" VerticalAlignment="Center" Margin="3, 0, 3, 0" />
+                <TextBox Grid.Row="2" Grid.Column="5" Margin="3" ToolTip="Destination port" local:IntegerRange.Min="1" local:IntegerRange.Max="65535" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1" Margin="3, 0, 3, 3" Header="Exchange">
+        </GroupBox>
+    </Grid>
+</Window>
