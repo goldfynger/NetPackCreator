@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>NetPackCreator</RootNamespace>
     <AssemblyName>NetPackCreator</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -23,6 +24,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -32,8 +34,13 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>mainicon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="PresentationFramework.Classic" />
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Core" />
@@ -57,8 +64,37 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="IntegerRange.cs" />
-    <Compile Include="Masking.cs" />
+    <Compile Include="Connections\Connection.cs" />
+    <Compile Include="Connections\UdpConnection.cs" />
+    <Compile Include="Controllers\TextBoxChangeCanceledHelper.cs" />
+    <Compile Include="Controllers\ConnectionStateController.cs" />
+    <Compile Include="Controllers\ConnectionModeController.cs" />
+    <Compile Include="Controllers\DestinationGroup.cs" />
+    <Compile Include="Controllers\Enums.cs" />
+    <Compile Include="Controllers\ExchangeGroup.cs" />
+    <Compile Include="Controllers\ExchangeViewDataInfo.cs" />
+    <Compile Include="Controllers\SendCommandController.cs" />
+    <Compile Include="Controllers\SourceGroup.cs" />
+    <Compile Include="Controllers\ExchangeViewController.cs" />
+    <Compile Include="Controllers\WriteController.cs" />
+    <Compile Include="Controls\ColoredTextBox.cs" />
+    <Compile Include="Controllers\ColoredTextBoxController.cs" />
+    <Compile Include="Controllers\ComboBoxController.cs" />
+    <Compile Include="Controllers\ComboBoxSelectionChangedHelper.cs" />
+    <Compile Include="Controllers\Interfaces.cs" />
+    <Compile Include="Controllers\DestinationIpAddressController.cs" />
+    <Compile Include="Controllers\PortController.cs" />
+    <Compile Include="Controllers\SourceIpAddressController.cs" />
+    <Compile Include="Controllers\PhysicalAddressController.cs" />
+    <Compile Include="DataEventArgs.cs" />
+    <Compile Include="Extensions\Extensions.cs" />
+    <Compile Include="Controls\IntegerRange.cs" />
+    <Compile Include="Controllers\InterfaceController.cs" />
+    <Compile Include="Extensions\AddressExtensions.cs" />
+    <Compile Include="Extensions\InterfaceExtensions.cs" />
+    <Compile Include="IPv6MacResolver.cs" />
+    <Compile Include="Manager.cs" />
+    <Compile Include="Controls\Masking.cs" />
     <Compile Include="NetPacketCreator.xaml.cs">
       <DependentUpon>NetPacketCreator.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -69,6 +105,7 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ParallelAwaitable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -86,6 +123,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

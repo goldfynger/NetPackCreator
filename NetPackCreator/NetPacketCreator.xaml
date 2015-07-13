@@ -1,7 +1,7 @@
 ﻿<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
-        xmlns:local="clr-namespace:NetPackCreator"
+        xmlns:local="clr-namespace:NetPackCreator.Controls"
         
         x:Class="NetPackCreator.NetPacketCreator"
         Title="Network packet creator" MinWidth="800" MinHeight="600"
@@ -20,7 +20,7 @@
             (?: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){3} \: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){0,3} (?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))? )       |
             (?: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){4} \: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){0,2} (?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))? )       |
             (?: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){5} \: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){0,1} (?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))? )       |
-            (?: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){6} \: 						                           (?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))? )       |
+            (?: (?:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))\:){6} \:                                                  (?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))? )       |
             
             (?: [fF][eE]80\: (?:(?:\:(?:0|(?:[1-9a-fA-F][0-9a-fA-F]{0,3}))){1,4})                                                   %(?:[0-9a-zA-Z]{1,})? )       |
             
@@ -36,6 +36,8 @@
         <!-- 10: link-local with zone index (fe80::7:8%eth0) -->
 
         <!-- 11, 12: IPv4 (127.0.0.1) or deprecated IPv4-compatible IPv6 (::127.0.0.1) or IPv4-mapped IPv6 (::ffff:127.0.0.1) or IPv4-translated IPv6 (::ffff:0:127.0.0.1) or IPv4-embedded IPv6 64:ff9b::192.0.2.33 -->
+
+        <sys:String x:Key="MACAddressRegex">^((?:[0-9a-fA-F]{2}){0,}|(?:[0-9a-fA-F]{2}\:){0,}|(?:[0-9a-fA-F]{2}\-){0,})?[0-9a-fA-F]{0,2}$</sys:String>
     </Window.Resources>
     
     <Grid>
@@ -62,42 +64,52 @@
                 </Grid.RowDefinitions>
 
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Source adapter" VerticalAlignment="Center" Margin="0, 0, 3, 0" />
-                <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="5" Margin="3">
-                    <ComboBoxItem>222</ComboBoxItem>
-                    <ComboBoxItem>333</ComboBoxItem>
-                    <ComboBoxItem>222</ComboBoxItem>
-                    <ComboBoxItem>333</ComboBoxItem>
-                    <ComboBoxItem>222</ComboBoxItem>
-                    <ComboBoxItem>333</ComboBoxItem>
-                    <ComboBoxItem>333</ComboBoxItem>
-                    <ComboBoxItem>222</ComboBoxItem>
-                    <ComboBoxItem>333</ComboBoxItem>
-                    <ComboBoxItem>333</ComboBoxItem>
-                    <ComboBoxItem>333</ComboBoxItem>
-                    <ComboBoxItem>222</ComboBoxItem>
-                </ComboBox>
+                <ComboBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="5" x:Name="cbInterfaces" Margin="3" ToolTip="Current interface" />
 
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="Source MAC" VerticalAlignment="Center" Margin="0, 0, 3, 0" />
-                <TextBox Grid.Row="1" Grid.Column="1" Margin="3" ToolTip="Source MAC" local:Masking.Mask="^((?:[0-9a-fA-F]{2}){0,}|(?:[0-9a-fA-F]{2}\:){0,}|(?:[0-9a-fA-F]{2}\-){0,})?[0-9a-fA-F]{0,2}$" />
+                <local:ColoredTextBox Grid.Row="1" Grid.Column="1" x:Name="ctbSourceMAC" Margin="3" ToolTip="Source MAC" local:Masking.Mask="{StaticResource MACAddressRegex}" IsReadOnly="True" />
 
                 <TextBlock Grid.Row="1" Grid.Column="2" Text="Source IP" VerticalAlignment="Center" Margin="3, 0, 3, 0" />
-                <TextBox Grid.Row="1" Grid.Column="3" Margin="3" ToolTip="Source IP" local:Masking.Mask="{StaticResource IPAddressRegex}" />
+                <ComboBox Grid.Row="1" Grid.Column="3" x:Name="cbSourceIP" Margin="3" ToolTip="Source IP" />
 
                 <TextBlock Grid.Row="1" Grid.Column="4" Text="Source port" VerticalAlignment="Center" Margin="3, 0, 3, 0" />
-                <TextBox Grid.Row="1" Grid.Column="5" Margin="3" ToolTip="Source port" local:IntegerRange.Min="1" local:IntegerRange.Max="65535" />
+                <local:ColoredTextBox Grid.Row="1" Grid.Column="5" x:Name="ctbSourcePort" Margin="3" ToolTip="Source port" local:IntegerRange.Min="1" local:IntegerRange.Max="65535" />
 
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Destination MAC" VerticalAlignment="Center" Margin="0, 0, 3, 0" />
-                <TextBox Grid.Row="2" Grid.Column="1" Margin="3" ToolTip="Destination MAC" local:Masking.Mask="^((?:[0-9a-fA-F]{2}){0,}|(?:[0-9a-fA-F]{2}\:){0,}|(?:[0-9a-fA-F]{2}\-){0,})?[0-9a-fA-F]{0,2}$" />
+                <local:ColoredTextBox Grid.Row="2" Grid.Column="1" x:Name="ctbDestinationMAC" Margin="3" ToolTip="Destination MAC" local:Masking.Mask="{StaticResource MACAddressRegex}" IsReadOnly="True" />
 
                 <TextBlock Grid.Row="2" Grid.Column="2" Text="Destination IP" VerticalAlignment="Center" Margin="3, 0, 3, 0" />
-                <TextBox Grid.Row="2" Grid.Column="3" Margin="3" ToolTip="Destination IP" local:Masking.Mask="{StaticResource IPAddressRegex}" />
+                <local:ColoredTextBox Grid.Row="2" Grid.Column="3" x:Name="ctbDestinationIP" Margin="3" ToolTip="Destination IP" local:Masking.Mask="{StaticResource IPAddressRegex}" />
                 
                 <TextBlock Grid.Row="2" Grid.Column="4" Text="Destination port" VerticalAlignment="Center" Margin="3, 0, 3, 0" />
-                <TextBox Grid.Row="2" Grid.Column="5" Margin="3" ToolTip="Destination port" local:IntegerRange.Min="1" local:IntegerRange.Max="65535" />
+                <local:ColoredTextBox Grid.Row="2" Grid.Column="5" x:Name="ctbDestinationPort" Margin="3" ToolTip="Destination port" local:IntegerRange.Min="1" local:IntegerRange.Max="65535" />
             </Grid>
         </GroupBox>
 
         <GroupBox Grid.Row="1" Margin="3, 0, 3, 3" Header="Exchange">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="6*" />
+                </Grid.RowDefinitions>
+                
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="4*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    
+                    <ComboBox Grid.Column="0" Margin="3" ToolTip="Connection mode" x:Name="cbConnectionMode" />
+                    <Button Grid.Column="1" Margin="3" x:Name="bConnection" Content="Connect" ToolTip="{Binding Content, RelativeSource={RelativeSource Self}}" />
+                    <Button Grid.Column="2" Margin="3" x:Name="bSend" Content="Send" ToolTip="{Binding Content, RelativeSource={RelativeSource Self}}" />
+                </Grid>
+                
+                <TextBox Grid.Row="1" Margin="3" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" ToolTip="Data to write" />
+
+                <RichTextBox Grid.Row="2" Margin="3" VerticalScrollBarVisibility="Auto" />
+            </Grid>
         </GroupBox>
     </Grid>
 </Window>

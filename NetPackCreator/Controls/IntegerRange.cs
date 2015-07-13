@@ -3,36 +3,39 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
-namespace NetPackCreator
+namespace NetPackCreator.Controls
 {
-    public static class IntegerRange
+    /// <summary></summary>
+    internal static class IntegerRange
     {
+        /// <summary></summary>
         private static readonly DependencyPropertyKey _validationFuncPropertyKey = DependencyProperty.RegisterAttachedReadOnly("ValidationFunc", typeof(Func<int, bool>), typeof(IntegerRange), new FrameworkPropertyMetadata());
 
-        /// <summary>
-        /// Identifies the <see cref="Max"/> dependency property.
-        /// </summary>
-        public static readonly DependencyProperty MaxProperty = DependencyProperty.RegisterAttached("MaxProperty", typeof(int?), typeof(IntegerRange), new FrameworkPropertyMetadata(OnMaxChanged));
+        /// <summary>Identifies the <see cref="Max"/> dependency property.</summary>
+        public static readonly DependencyProperty MaxProperty = DependencyProperty.RegisterAttached("Max", typeof(int?), typeof(IntegerRange), new FrameworkPropertyMetadata(OnMaxChanged));
 
-        /// <summary>
-        /// Identifies the <see cref="Min"/> dependency property.
-        /// </summary>
-        public static readonly DependencyProperty MinProperty = DependencyProperty.RegisterAttached("MinProperty", typeof(int?), typeof(IntegerRange), new FrameworkPropertyMetadata(OnMinChanged));
+        /// <summary>Identifies the <see cref="Min"/> dependency property.</summary>
+        public static readonly DependencyProperty MinProperty = DependencyProperty.RegisterAttached("Min", typeof(int?), typeof(IntegerRange), new FrameworkPropertyMetadata(OnMinChanged));
 
-        /// <summary>
-        /// Identifies the <see cref="ValidationFunc"/> dependency property.
-        /// </summary>
+        /// <summary>Identifies the <see cref="ValidationFunc"/> dependency property.</summary>
         public static readonly DependencyProperty ValidationFuncProperty = _validationFuncPropertyKey.DependencyProperty;
 
-        /// <summary>
-        /// Gets the max for a given <see cref="TextBox"/>.
-        /// </summary>
-        /// <param name="textBox">
-        /// The <see cref="TextBox"/> whose max is to be retrieved.
-        /// </param>
-        /// <returns>
-        /// The max, or <see langword="null"/> if no max has been set.
-        /// </returns>
+        /// <summary></summary>
+        public static readonly RoutedEvent ChangeCanceledEvent = EventManager.RegisterRoutedEvent("ChangeCanceled", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(IntegerRange));
+
+        /// <summary></summary>
+        /// <param name="textBox"></param>
+        private static void RaiseChangeCanceledEvent(TextBox textBox)
+        {
+            if (!textBox.IsReadOnly)
+            {
+                textBox.RaiseEvent(new RoutedEventArgs(ChangeCanceledEvent));
+            }
+        }
+
+        /// <summary>Gets the max for a given <see cref="TextBox"/>.</summary>
+        /// <param name="textBox">The <see cref="TextBox"/> whose max is to be retrieved.</param>
+        /// <returns>The max, or <see langword="null"/> if no max has been set.</returns>
         public static int? GetMax(TextBox textBox)
         {
             if (textBox == null)
@@ -43,15 +46,9 @@ namespace NetPackCreator
             return textBox.GetValue(MaxProperty) as int?;
         }
 
-        /// <summary>
-        /// Sets the max for a given <see cref="TextBox"/>.
-        /// </summary>
-        /// <param name="textBox">
-        /// The <see cref="TextBox"/> whose max is to be set.
-        /// </param>
-        /// <param name="max">
-        /// The max to set, or <see langword="null"/> to remove any existing max from <paramref name="textBox"/>.
-        /// </param>
+        /// <summary>Sets the max for a given <see cref="TextBox"/>.</summary>
+        /// <param name="textBox">The <see cref="TextBox"/> whose max is to be set.</param>
+        /// <param name="max">The max to set, or <see langword="null"/> to remove any existing max from <paramref name="textBox"/>.</param>
         public static void SetMax(TextBox textBox, int max)
         {
             if (textBox == null)
@@ -62,15 +59,9 @@ namespace NetPackCreator
             textBox.SetValue(MaxProperty, max);
         }
 
-        /// <summary>
-        /// Gets the min for a given <see cref="TextBox"/>.
-        /// </summary>
-        /// <param name="textBox">
-        /// The <see cref="TextBox"/> whose min is to be retrieved.
-        /// </param>
-        /// <returns>
-        /// The min, or <see langword="null"/> if no min has been set.
-        /// </returns>
+        /// <summary>Gets the min for a given <see cref="TextBox"/>.</summary>
+        /// <param name="textBox">The <see cref="TextBox"/> whose min is to be retrieved.</param>
+        /// <returns>The min, or <see langword="null"/> if no min has been set.</returns>
         public static int? GetMin(TextBox textBox)
         {
             if (textBox == null)
@@ -81,15 +72,9 @@ namespace NetPackCreator
             return textBox.GetValue(MinProperty) as int?;
         }
 
-        /// <summary>
-        /// Sets the min for a given <see cref="TextBox"/>.
-        /// </summary>
-        /// <param name="textBox">
-        /// The <see cref="TextBox"/> whose min is to be set.
-        /// </param>
-        /// <param name="min">
-        /// The min to set, or <see langword="null"/> to remove any existing min from <paramref name="textBox"/>.
-        /// </param>
+        /// <summary>Sets the min for a given <see cref="TextBox"/>.</summary>
+        /// <param name="textBox">The <see cref="TextBox"/> whose min is to be set.</param>
+        /// <param name="min">The min to set, or <see langword="null"/> to remove any existing min from <paramref name="textBox"/>.</param>
         public static void SetMin(TextBox textBox, int min)
         {
             if (textBox == null)
@@ -100,18 +85,10 @@ namespace NetPackCreator
             textBox.SetValue(MinProperty, min);
         }
 
-        /// <summary>
-        /// Gets the validation func for the <see cref="TextBox"/>.
-        /// </summary>
-        /// <remarks>
-        /// This method can be used to retrieve the actual <see cref="Func{int, bool}"/> instance created as a result of setting the min and max on a <see cref="TextBox"/>.
-        /// </remarks>
-        /// <param name="textBox">
-        /// The <see cref="TextBox"/> whose mask expression is to be retrieved.
-        /// </param>
-        /// <returns>
-        /// The mask expression as an instance of <see cref="Func{int, bool}"/>, or <see langword="null"/> if no max and min has been applied to <paramref name="textBox"/>.
-        /// </returns>
+        /// <summary>Gets the validation func for the <see cref="TextBox"/>.</summary>
+        /// <remarks>This method can be used to retrieve the actual <see cref="Func{int, bool}"/> instance created as a result of setting the min and max on a <see cref="TextBox"/>.</remarks>
+        /// <param name="textBox">The <see cref="TextBox"/> whose mask expression is to be retrieved.</param>
+        /// <returns>The mask expression as an instance of <see cref="Func{int, bool}"/>, or <see langword="null"/> if no max and min has been applied to <paramref name="textBox"/>.</returns>
         public static Func<int, bool> GetValidationFunc(TextBox textBox)
         {
             if (textBox == null)
@@ -122,11 +99,17 @@ namespace NetPackCreator
             return textBox.GetValue(ValidationFuncProperty) as Func<int, bool>;
         }
 
+        /// <summary></summary>
+        /// <param name="textBox"></param>
+        /// <param name="regex"></param>
         private static void SetValidationFunc(TextBox textBox, Func<int, bool> regex)
         {
             textBox.SetValue(_validationFuncPropertyKey, regex);
         }
 
+        /// <summary></summary>
+        /// <param name="dependencyObject"></param>
+        /// <param name="e"></param>
         private static void OnMaxChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
             var textBox = dependencyObject as TextBox;
@@ -166,6 +149,9 @@ namespace NetPackCreator
             }
         }       
 
+        /// <summary></summary>
+        /// <param name="dependencyObject"></param>
+        /// <param name="e"></param>
         private static void OnMinChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs e)
         {
             var textBox = dependencyObject as TextBox;
@@ -205,22 +191,35 @@ namespace NetPackCreator
             }
         }
 
+        /// <summary></summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void NoCutting(object sender, ExecutedRoutedEventArgs e)
         {
             if (e.Command == ApplicationCommands.Cut)
             {
                 e.Handled = true;
+
+                RaiseChangeCanceledEvent(sender as TextBox);
             }
         }
 
+        /// <summary></summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void NoDragCopy(object sender, DataObjectCopyingEventArgs e)
         {
             if (e.IsDragDrop)
             {
                 e.CancelCommand();
+
+                RaiseChangeCanceledEvent(sender as TextBox);
             }
         }
 
+        /// <summary></summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void textBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
             var textBox = sender as TextBox;
@@ -237,9 +236,14 @@ namespace NetPackCreator
             if (!int.TryParse(proposedText, out integer) || !func(integer) || (proposedText.Length > 1 && proposedText[0] == '0'))
             {
                 e.Handled = true;
+
+                RaiseChangeCanceledEvent(textBox);
             }
         }
 
+        /// <summary></summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void textBox_PreviewKeyDown(object sender, KeyEventArgs e)
         {
             var textBox = sender as TextBox;
@@ -252,7 +256,7 @@ namespace NetPackCreator
 
             string proposedText = null;
 
-            //pressing space doesn't raise PreviewTextInput, reasons here http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/446ec083-04c8-43f2-89dc-1e2521a31f6b?prof=required
+            // Pressing space doesn't raise PreviewTextInput, reasons here http://social.msdn.microsoft.com/Forums/en-US/wpf/thread/446ec083-04c8-43f2-89dc-1e2521a31f6b?prof=required
             if (e.Key == Key.Space)
             {
                 proposedText = GetProposedText(textBox, " ");
@@ -272,9 +276,14 @@ namespace NetPackCreator
             if (proposedText != null && proposedText != string.Empty && (!int.TryParse(proposedText, out integer) || !func(integer) || (proposedText.Length > 1 && proposedText[0] == '0')))
             {
                 e.Handled = true;
+
+                RaiseChangeCanceledEvent(textBox);
             }
         }
 
+        /// <summary></summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private static void Pasting(object sender, DataObjectPastingEventArgs e)
         {
             var textBox = sender as TextBox;
@@ -294,14 +303,21 @@ namespace NetPackCreator
                 if (!int.TryParse(proposedText, out integer) || !func(integer) || (proposedText.Length > 1 && proposedText[0] == '0'))
                 {
                     e.CancelCommand();
+
+                    RaiseChangeCanceledEvent(textBox);
                 }
             }
             else
             {
                 e.CancelCommand();
+
+                RaiseChangeCanceledEvent(textBox);
             }
         }
 
+        /// <summary></summary>
+        /// <param name="textBox"></param>
+        /// <returns></returns>
         private static string GetProposedTextDelete(TextBox textBox)
         {
             var text = GetTextWithSelectionRemoved(textBox);
@@ -313,6 +329,9 @@ namespace NetPackCreator
             return text;
         }
 
+        /// <summary></summary>
+        /// <param name="textBox"></param>
+        /// <returns></returns>
         private static string GetProposedTextBackspace(TextBox textBox)
         {
             var text = GetTextWithSelectionRemoved(textBox);
@@ -324,7 +343,10 @@ namespace NetPackCreator
             return text;
         }
 
-
+        /// <summary></summary>
+        /// <param name="textBox"></param>
+        /// <param name="newText"></param>
+        /// <returns></returns>
         private static string GetProposedText(TextBox textBox, string newText)
         {
             var text = GetTextWithSelectionRemoved(textBox);
@@ -333,6 +355,9 @@ namespace NetPackCreator
             return text;
         }
 
+        /// <summary></summary>
+        /// <param name="textBox"></param>
+        /// <returns></returns>
         private static string GetTextWithSelectionRemoved(TextBox textBox)
         {
             var text = textBox.Text;
